@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -58,8 +59,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if err = worktree.Pull(&git.PullOptions{RemoteName: "origin"}); err != nil {
+		log.Errorf("error while pulling: %v", err)
+	}
 	log.Debugf("write test file: %s", testFile)
-	ioutil.WriteFile(testFile, []byte("Hello World"), 0644)
+	ioutil.WriteFile(testFile, []byte(time.Now().String()), 0644)
 	_, err = worktree.Add(testFile)
 	if err != nil {
 		log.Fatal(err)
